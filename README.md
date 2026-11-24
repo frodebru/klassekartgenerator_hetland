@@ -1,0 +1,2 @@
+# klassekartgenerator_hetland
+klassekartgenerator med læringsgrupper
