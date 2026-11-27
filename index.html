@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="no">
 <head>
 <meta charset="UTF-8">
@@ -6,114 +6,249 @@
 <title>Klassekartgenerator Hetland v2.0</title>
 
 <style>
-*{
-    box-sizing:border-box;
+* {
+    box-sizing: border-box;
 }
 
-body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#eef2f7;
-    color:#1f2937;
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #eef2f7;
+    color: #1f2937;
 }
 
-header{
-    background:#1e40af;
-    color:white;
-    padding:20px;
+header {
+    background: #1e40af;
+    color: white;
+    padding: 20px;
 }
 
-header h1{
-    margin:0;
+header h1 {
+    margin: 0;
 }
 
-.container{
-    max-width:1400px;
-    margin:auto;
-    padding:20px;
+.container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 20px;
 }
 
-.controls{
-    background:white;
-    border-radius:12px;
-    padding:20px;
-    margin-bottom:20px;
-    box-shadow:0 3px 10px rgba(0,0,0,.08);
+.controls {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
-textarea{
-    width:100%;
-    min-height:180px;
-    padding:10px;
-    margin-bottom:15px;
+textarea {
+    width: 100%;
+    min-height: 180px;
+    padding: 10px;
+    margin-bottom: 15px;
+    resize: vertical;
 }
 
-.row{
-    display:flex;
-    flex-wrap:wrap;
-    gap:15px;
-    align-items:center;
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
 }
 
-label{
-    font-weight:bold;
+label {
+    font-weight: bold;
 }
 
-input{
-    padding:8px;
-    width:80px;
+input {
+    padding: 8px;
+    width: 80px;
 }
 
-button{
-    padding:10px 15px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    background:#2563eb;
-    color:white;
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #2563eb;
+    color: white;
+    font-size: 14px;
 }
 
-button:hover{
-    background:#1d4ed8;
+button:hover {
+    background: #1d4ed8;
 }
 
-.classroom-wrapper{
-    background:white;
-    border-radius:12px;
-    padding:30px;
-    box-shadow:0 3px 10px rgba(0,0,0,.08);
+.classroom-wrapper {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
 
-.board{
-    background:#166534;
-    color:white;
-    text-align:center;
-    padding:20px;
-    border-radius:10px;
-    font-size:24px;
-    margin-bottom:40px;
+.board {
+    background: #166534;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 24px;
+    margin-bottom: 40px;
+    font-weight: bold;
 }
 
-.classroom{
-    display:grid;
-    gap:30px;
-    justify-content:center;
+.classroom {
+    display: grid;
+    gap: 30px;
+    justify-content: center;
 }
 
-.seat{
-    width:140px;
-    min-height:80px;
-    background:#dbeafe;
-    border:2px solid #60a5fa;
-    border-radius:10px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    padding:10px;
-    cursor:move;
-    font-weight:bold;
-    transition:.2s;
+.seat {
+    width: 140px;
+    min-height: 80px;
+    background: #dbeafe;
+    border: 2px solid #60a5fa;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 10px;
+    cursor: move;
+    font-weight: bold;
+    user-select: none;
 }
 
-.seat
+.seat:hover {
+    transform: scale(1.03);
+}
+
+.teacher {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.teacher-desk {
+    display: inline-block;
+    background: #fbbf24;
+    color: black;
+    padding: 15px 40px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.footer {
+    text-align: center;
+    color: #666;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .seat {
+        width: 110px;
+    }
+}
+
+@media print {
+
+    .controls,
+    .footer {
+        display: none;
+    }
+
+    body {
+        background: white;
+    }
+
+    .classroom-wrapper {
+        box-shadow: none;
+    }
+
+    .seat {
+        border: 1px solid black;
+        background: white;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>📚 Klassekartgenerator Hetland v2.0</h1>
+</header>
+
+<div class="container">
+
+<div class="controls">
+
+<h2>Elevliste</h2>
+
+<textarea id="students">Ola
+Kari
+Per
+Anne
+Jon
+Sara
+Emma
+Mats
+Lisa
+Noah
+Ida
+Henrik</textarea>
+
+<div class="row">
+
+<label>
+Kolonner:
+<input type="number" id="columns" value="4" min="1" max="10">
+</label>
+
+<button onclick="generateClassroom()">
+Generer klassekart
+</button>
+
+<button onclick="reshuffle()">
+Ny trekning
+</button>
+
+<button onclick="window.print()">
+Skriv ut / PDF
+</button>
+
+</div>
+
+</div>
+
+<div class="classroom-wrapper">
+
+<div class="board">
+TAVLE
+</div>
+
+<div id="classroom" class="classroom"></div>
+
+<div class="teacher">
+<div class="teacher-desk">
+LÆRER
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+Klassekartgenerator Hetland • GitHub Pages
+</div>
+
+</div>
+
+<script>
+let seatData = [];
+let draggedIndex = null;
+
+function shuffle(array) {
+
+    const arr = [...array];
+
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
