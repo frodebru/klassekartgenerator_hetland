@@ -1,52 +1,257 @@
 <!DOCTYPE html>
-<html>
+<html lang="no">
 <head>
-    <meta charset="utf-8">
-    <title>Klassekartgenerator Hetland</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Klassekartgenerator Hetland</title>
 
-    <style>
-        body{
-            font-family: Arial, sans-serif;
-            padding:40px;
-            background:#f5f5f5;
-        }
+<style>
+body{
+    font-family: Arial, sans-serif;
+    margin:0;
+    padding:30px;
+    background:#f3f4f6;
+}
 
-        h1{
-            color:#1f2937;
-        }
+h1{
+    color:#1f2937;
+}
 
-        .table{
-            display:inline-block;
-            width:220px;
-            margin:10px;
-            padding:15px;
-            background:white;
-            border-radius:10px;
-            border:1px solid #ccc;
-            vertical-align:top;
-        }
-    </style>
+.controls{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:25px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+textarea{
+    width:100%;
+    height:200px;
+    padding:10px;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+input{
+    padding:8px;
+    margin-right:10px;
+}
+
+button{
+    padding:10px 16px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+    margin-right:8px;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+#classroom{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.table{
+    background:white;
+    border-radius:12px;
+    padding:15px;
+    width:220px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.table h3{
+    margin-top:0;
+    color:#1f2937;
+}
+
+.student{
+    padding:6px;
+    border-bottom:1px solid #eee;
+}
+
+.footer{
+    margin-top:30px;
+    color:#666;
+    font-size:14px;
+}
+</style>
 </head>
 
 <body>
 
-<h1>Klassekartgenerator Hetland</h1>
+<h1>📚 Klassekartgenerator Hetland</h1>
 
-<div class="table">
-    <h2>Bord A</h2>
-    <p>Elev 1</p>
-    <p>Elev 2</p>
-    <p>Elev 3</p>
-    <p>Elev 4</p>
+<div class="controls">
+
+<h3>Elevliste</h3>
+
+<textarea id="studentList" placeholder="Én elev per linje">
+Ola
+Kari
+Per
+Anne
+Jon
+Sara
+Emma
+Lars
+Ingrid
+Mats
+</textarea>
+
+<label>
+Elever per bord:
+<input type="number" id="groupSize" value="4" min="1" max="10">
+</label>
+
+<br><br>
+
+<button onclick="generateClassroom()">
+Generer klassekart
+</button>
+
+<button onclick="reshuffle()">
+Ny trekning
+</button>
+
 </div>
 
-<div class="table">
-    <h2>Bord B</h2>
-    <p>Elev 5</p>
-    <p>Elev 6</p>
-    <p>Elev 7</p>
-    <p>Elev 8</p>
+<div id="classroom"></div>
+
+<div class="footer">
+Klassekartgenerator Hetland • Lagret lokalt i nettleseren
 </div>
+
+<script>
+
+let currentStudents = [];
+
+function shuffle(array){
+
+    const copy = [...array];
+
+    for(let i = copy.length - 1; i > 0; i--){
+
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+
+    return copy;
+}
+
+function getStudents(){
+
+    const raw = document
+        .getElementById("studentList")
+        .value;
+
+    const students = raw
+        .split("\n")
+        .map(s => s.trim())
+        .filter(s => s !== "");
+
+    return students;
+}
+
+function drawTables(students){
+
+    const classroom =
+        document.getElementById("classroom");
+
+    classroom.innerHTML = "";
+
+    const size =
+        parseInt(document.getElementById("groupSize").value);
+
+    let tableNumber = 1;
+
+    for(let i = 0; i < students.length; i += size){
+
+        const table =
+            document.createElement("div");
+
+        table.className = "table";
+
+        const title =
+            document.createElement("h3");
+
+        title.textContent =
+            "Bord " + tableNumber;
+
+        table.appendChild(title);
+
+        students
+            .slice(i, i + size)
+            .forEach(student => {
+
+                const div =
+                    document.createElement("div");
+
+                div.className = "student";
+
+                div.textContent = student;
+
+                table.appendChild(div);
+            });
+
+        classroom.appendChild(table);
+
+        tableNumber++;
+    }
+}
+
+function generateClassroom(){
+
+    const students = getStudents();
+
+    if(students.length === 0){
+
+        alert("Legg inn minst én elev.");
+
+        return;
+    }
+
+    localStorage.setItem(
+        "students",
+        document.getElementById("studentList").value
+    );
+
+    currentStudents = shuffle(students);
+
+    drawTables(currentStudents);
+}
+
+function reshuffle(){
+
+    const students = getStudents();
+
+    currentStudents = shuffle(students);
+
+    drawTables(currentStudents);
+}
+
+window.onload = () => {
+
+    const saved =
+        localStorage.getItem("students");
+
+    if(saved){
+
+        document.getElementById("studentList").value =
+            saved;
+    }
+
+    generateClassroom();
+};
+
+</script>
 
 </body>
 </html>
